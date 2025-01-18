@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 82b456710559fe740bc4f333a0f0b015
+guid: 3cda8f09ebb3292409f27bb7b2c75371
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3622025300723057742
-    second: Player.Jump2-Fall2_0
+      213: 7126441481261252298
+    second: human.1_0
+  - first:
+      213: 3151244531042169809
+    second: human.1_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +40,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 30
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,7 +78,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,13 +129,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player.Jump2-Fall2_0
+      name: human.1_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1
-        width: 46
-        height: 61
+        y: 0
+        width: 48
+        height: 76
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +144,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e44431912d4044230800000000000000
-      internalID: 3622025300723057742
+      spriteID: ace7f2b05c436e260800000000000000
+      internalID: 7126441481261252298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: human.1_1
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 48
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d3392974387bbb20800000000000000
+      internalID: 3151244531042169809
       vertices: []
       indices: 
       edges: []
@@ -151,7 +176,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 129ef77854d41b64a822f67e8af6dcea
     internalID: 0
     vertices: []
     indices: 
@@ -160,7 +185,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      human.1_0: 7126441481261252298
+      human.1_1: 3151244531042169809
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
