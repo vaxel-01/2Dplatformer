@@ -46,7 +46,8 @@ public class Player : MonoBehaviour
     [SerializeField] private const string ATTACK = "Player_Attack";
     //[SerializeField] private const string DIE = "";
 
-    [SerializeField] private int health;
+    public int playerHealth; //total health
+    public int currentHealth;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -55,6 +56,8 @@ public class Player : MonoBehaviour
         GameManager.instance.onGamePlay.AddListener(StartingGame);
         GameManager.instance.onGameEnd.AddListener(GameOver);
         startingPosition = transform.position;
+
+        currentHealth = playerHealth;
     }
 
     // Update is called once per frame
@@ -132,21 +135,21 @@ public class Player : MonoBehaviour
     }
 
 
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Key")
-        {
-            Destroy(collision.gameObject);
-        }
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy") //Get hurt
         {
+            Hurt();
+        }
+    }
 
+    public void Hurt()
+    {
+        currentHealth--;
+        //UImanager.Instance.UpdateHealthbar();
+        if (currentHealth == 0)
+        {
+            GameManager.instance.EndGame();
         }
     }
 
