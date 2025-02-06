@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class UImanager : MonoBehaviour
@@ -15,37 +16,22 @@ public class UImanager : MonoBehaviour
 
     #endregion
 
-    //public GameObject[] healthbar;
-    public GameObject healthbar;
-    public GameObject[] currentHealth;
-    public float healthbarDistance;
-    public float healthbarFrameSize;
-    public Transform startPosition;
+    public TextMeshProUGUI healthText;
+    public GameObject gameOverScreenA;
+    public GameObject gameOverScreenB;
 
-    private void Start()
+    public void UpdateHealthbar(string health)
     {
-        GameManager.instance.onGamePlay.AddListener(CreateHealthbar);
+        healthText.text = health;
+    }
+    
+    public void ShowScreen(GameObject screen)
+    {
+        screen.SetActive(true);
+    }
+    public void HideScreen(GameObject screen)
+    {
+        screen.SetActive(false);
     }
 
-    private void CreateHealthbar()
-    {
-        for (int i = 0; i < currentHealth.Length; i++)
-        {
-            currentHealth[i].SetActive(true);
-        }
-    }
-
-    public void UpdateHealthbar()
-    {
-        int playerHealth = Player.Instance.currentHealth;
-
-        for(int i =0; i < currentHealth.Length; i++)
-        {
-            currentHealth[i].SetActive(false);
-        }
-        for(int i = 0; i<playerHealth; i++)
-        {
-            currentHealth[i].SetActive(true);
-        }
-    }
 }

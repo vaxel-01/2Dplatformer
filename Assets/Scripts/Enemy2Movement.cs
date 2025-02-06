@@ -3,6 +3,17 @@ using UnityEngine;
 
 public class Enemy2 : MonoBehaviour
 {
+    #region
+    public static Enemy2 Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
+    #endregion
+
     [Header("Movement things")]
     [SerializeField] private Rigidbody2D rb;
     
@@ -27,8 +38,16 @@ public class Enemy2 : MonoBehaviour
 
     private const string IDLE = "Enemy2_Idle";
     private const string WALK = "Enemy2_Walk";
+    private const string HURT = "Enemy2_Hurt";
 
     private EnemyState enemyState;
+
+    public int enemyHealth;
+    private int currentHealth;
+
+    public float timeStunned;
+    private float stunnedTimer=0;
+    private bool isHurt = false;
 
     [Header("Shooting")]
     public GameObject bullet;
@@ -44,15 +63,11 @@ public class Enemy2 : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb.position = new Vector2(pointL.position.x, rb.position.y);
-        _speed = speed;
-        distance = 0;
-        currentPoint = pointR;
-        isPausing = false;
-        pauseMovementTimer = 0;
-        state= IDLE;
-        enemyState = EnemyState.Patrol;
-        player = GameObject.FindGameObjectWithTag("Player");
+        
+        GameManager.instance.onGamePlay.AddListener(StartingGame);
+        GameManager.instance.onGameEnd.AddListener(EndingGame);
+
+        StartingGame();
     }
 
     // Update is called once per frame
@@ -61,19 +76,36 @@ public class Enemy2 : MonoBehaviour
         if (GameManager.instance.isPlaying)
         {
 
-            switch (enemyState)
+            if (!isHurt)
             {
-                case EnemyState.Patrol:
-                    EnemyWalking();
-                    break;
-                case EnemyState.Fight:
-                    EnemyShooting();
-                    break;
-                case EnemyState.Die:
-                    break;
-                default:
-                    enemyState = EnemyState.Patrol;
-                    break;
+                switch (enemyState)
+                {
+                    case EnemyState.Patrol:
+                        EnemyWalking();
+                        break;
+                    case EnemyState.Fight:
+                        EnemyShooting();
+                        break;
+                    case EnemyState.Die:
+                        gameObject.SetActive(false);
+                        GameManager.instance.whoLost = "science";
+                        GameManager.instance.EndGame();
+                        //Drop something?
+                        break;
+                    default:
+                        enemyState = EnemyState.Patrol;
+                        break;
+                }
+            }
+            else
+            {
+                stunnedTimer += Time.deltaTime;
+                if(stunnedTimer > timeStunned)
+                {
+                    isHurt = false;
+                    rb.linearVelocity = Vector2.zero;
+                    stunnedTimer = 0;
+                }
             }
 
         }
@@ -148,6 +180,18 @@ public class Enemy2 : MonoBehaviour
         _speed = -_speed;
     }
 
+    public void Hurt()
+    {
+        currentHealth--;
+        isHurt = true;
+        state = HURT;
+        rb.linearVelocity=new Vector2(-rb.linearVelocity.x, rb.linearVelocity.y);
+        if (currentHealth == 0)
+        {
+            enemyState=EnemyState.Die;
+        }
+    }
+
 
     /* ANIMATION */
     void ChangeAnimationState()
@@ -155,6 +199,32 @@ public class Enemy2 : MonoBehaviour
         if (currentAnimation == state) return;
         anim.Play(state);
         currentAnimation = state;
+    }
+
+
+    /*  START GAME/END GAME FUNCTIONS  */
+
+    private void StartingGame()
+    {
+        gameObject.SetActive(true);
+        rb.position = new Vector2(pointL.position.x, rb.position.y);
+        _speed = speed;
+        distance = 0;
+        currentPoint = pointR;
+        isPausing = false;
+        pauseMovementTimer = 0;
+        state = IDLE;
+        enemyState = EnemyState.Patrol;
+        //player = GameObject.FindGameObjectWithTag("Player");
+        currentHealth = enemyHealth;
+        isHurt = false;
+        shootCooldownTimer = 0;
+        stunnedTimer = 0;
+    }
+
+    private void EndingGame()
+    {
+        rb.linearVelocity=Vector2.zero;
     }
 }
 

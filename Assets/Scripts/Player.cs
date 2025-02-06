@@ -38,16 +38,21 @@ public class Player : MonoBehaviour
 
     private bool isJumping = false;
     public bool isAttacking = false;
+    private bool isHurt = false;
 
 
-    [SerializeField] private const string IDLE = "Player_Idle2";
-    [SerializeField] private const string RUN = "Player_Run2";
-    [SerializeField] private const string JUMP = "Player_Jump2";
-    [SerializeField] private const string ATTACK = "Player_Attack";
+    private const string IDLE = "Player_Idle2";
+    private const string RUN = "Player_Run2";
+    private const string JUMP = "Player_Jump2";
+    private const string ATTACK = "Player_Attack";
+    private const string HURT = "Player_Hurt";
     //[SerializeField] private const string DIE = "";
 
     public int playerHealth; //total health
     public int currentHealth;
+
+    public float timeStunned;
+    private float stunnedTimer = 0;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -65,44 +70,58 @@ public class Player : MonoBehaviour
     {
         if (GameManager.instance.isPlaying)
         {
-            horizontal = Input.GetAxis("Horizontal");
-            
-
-            if(horizontal !=0 && !isJumping && !isAttacking)
+            if (!isHurt)
             {
-                state = "run";
-            }
-            
-            if (Input.GetButtonDown("Jump") && IsGrounded())
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-
-                isJumping = true;
-
-            }
-            if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
-            }
-            if(IsGrounded() && isJumping)
-            {
-                isJumping = false;
-            }
-            if (rb.linearVelocityY != 0)
-            {
-                state = "jump";
-            }
+                horizontal = Input.GetAxis("Horizontal");
 
 
-            if (Input.GetButtonDown("Fire1") && !isAttacking)
-            {
-                isAttacking = true;
-                state = "attack";
-            }
+                if (horizontal != 0 && !isJumping && !isAttacking)
+                {
+                    state = RUN;
+                }
 
-            if(IsGrounded() && !isJumping && !isAttacking && horizontal == 0)
+                if (Input.GetButtonDown("Jump") && IsGrounded() && !isAttacking)
+                {
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
+
+                    isJumping = true;
+
+                }
+                if (Input.GetButtonUp("Jump") && rb.linearVelocity.y > 0)
+                {
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+                }
+                if (IsGrounded() && isJumping)
+                {
+                    isJumping = false;
+                }
+                if (rb.linearVelocityY != 0)
+                {
+                    state = JUMP;
+                }
+
+
+                if (IsGrounded() && !isJumping && !isAttacking && horizontal == 0)
+                {
+                    state = IDLE;
+                }
+
+                if (Input.GetButtonDown("Fire1") && !isAttacking)
+                {
+                    isAttacking = true;
+                    state = ATTACK;
+                }
+            }
+            else
             {
-                state = "idle";
+
+                stunnedTimer += Time.deltaTime;
+                if (stunnedTimer > timeStunned)
+                {
+                    isHurt = false;
+                    rb.linearVelocity = Vector2.zero;
+                    stunnedTimer = 0;
+                }
             }
 
             Flip();
@@ -146,18 +165,26 @@ public class Player : MonoBehaviour
     public void Hurt()
     {
         currentHealth--;
-        //UImanager.Instance.UpdateHealthbar();
+        UImanager.Instance.UpdateHealthbar(currentHealth.ToString());
+        isHurt = true;
+        state = HURT;
+        rb.linearVelocity = new Vector2(-rb.linearVelocity.x, rb.linearVelocity.y);
         if (currentHealth == 0)
         {
+            GameManager.instance.whoLost = "robot";
             GameManager.instance.EndGame();
         }
     }
+
+    /*  START GAME/ END GAME FUNCTIONS  */
 
     private void StartingGame()
     {
         gameObject.SetActive(true);
         transform.position = startingPosition;
+        currentHealth = playerHealth;
         ResetAnimations();
+        UImanager.Instance.UpdateHealthbar(currentHealth.ToString());
         
     }
 
@@ -181,35 +208,23 @@ public class Player : MonoBehaviour
 
     void PlayAnimationState()
     {
-        switch (state)
-        {
-            case "idle":
-                state = IDLE;
-                break;
-            case "run":
-                state = RUN;
-                break;
-            case "jump":
-                state = JUMP;
-                break;
-            case "attack":
-                state = ATTACK;
-                break;
-            default:
-                break;
-        }
-        ChangeAnimationState();
-    }
-
-    void ChangeAnimationState()
-    {
         if (currentAnimation == state) return;
         animator.Play(state);
         currentAnimation = state;
     }
 
-    public void StopFighting()
+    void ChangeAnimationState()
+    {
+        
+    }
+
+    public void NoFight()
     {
         isAttacking = false;
     }
+    public void NoHurt()
+    {
+        isHurt = false;
+    }
+
 }

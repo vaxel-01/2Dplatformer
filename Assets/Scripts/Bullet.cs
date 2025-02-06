@@ -19,6 +19,8 @@ public class Bullet : MonoBehaviour
 
         float rot = Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, rot + 180);
+
+        GameManager.instance.onGameEnd.AddListener(EndingGame);
     }
 
     // Update is called once per frame
@@ -39,5 +41,10 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
             Player.Instance.Hurt();
         }
+    }
+
+    private void EndingGame()
+    {
+
     }
 }
